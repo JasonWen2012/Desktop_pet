@@ -1,0 +1,50 @@
+{
+  "apiVersion": "dsh.project-memory/v1alpha1",
+  "entries": [
+    {
+      "createdAt": "2026-09-13T08:35:16.533Z",
+      "id": "memory_0b38b8e1-c752-4863-b4e3-e362859a0a66",
+      "status": "active",
+      "subject": "文本渲染与图标字形",
+      "summary": "所有长度不可控的文本（菜单项、方案名、提示、toast、输入框内容）必须经 ui.fit_text()（逐级缩字号，仍放不下则截断加省略号）或 ui.fit_text_tail()（单行输入框从左侧滚动、保留末尾正在输入的内容）渲染，不要直接 render；✓ ✕ › ✨ 这类符号在微软雅黑等中文字体里缺字形、会显示成方框，必须改用 pygame 图元绘制的 draw_tick / draw_cross / draw_chev / star4_pts。",
+      "tags": [
+        "ui",
+        "text",
+        "font",
+        "convention"
+      ],
+      "title": "可变文本统一走 fit_text/fit_text_tail，勾叉箭头星星等符号用绘制图元",
+      "type": "convention"
+    },
+    {
+      "createdAt": "2026-09-13T08:35:16.603Z",
+      "id": "memory_17afa602-b59c-4ec9-8f0f-61221c5d79b3",
+      "status": "active",
+      "subject": "验证方式",
+      "summary": "本项目无法直接查看截图，验证手段固定为两条：在 SDL_VIDEODRIVER=dummy 下运行 tools/logic_test.py（60+ 条断言，逐条 check(name, cond)，末尾打印 ALL PASS / SOME FAILED），覆盖窄窗口布局、点击热区、文本宽度、纹身尺寸等；需要看造型时用 tools/ascii_view.py 把渲染出来的 PNG 转成彩色 ASCII 缩略图。新增或修改 UI 行为时应同时补一条断言。",
+      "tags": [
+        "testing",
+        "verification",
+        "workflow"
+      ],
+      "title": "界面与渲染改动用无头逻辑测试 + ASCII 预览验证，不依赖肉眼看图",
+      "type": "convention"
+    },
+    {
+      "createdAt": "2026-09-13T08:35:16.263Z",
+      "id": "memory_19ff731b-ab39-4938-a83c-b5a60332c1f5",
+      "status": "active",
+      "subject": "覆盖层 UI 尺寸（弹窗/菜单/提示）",
+      "summary": "桌宠窗口尺寸随缩放比例和换装面板开关变化（scene_w = round(300*scale)、scene_h = round(404*scale)、frame_w = scene_w + (236 if panel_open else 0)、frame_h = scene_h，scale 可在 0.7~1.5 之间），因此 InputModal、CtxMenu、toast 等所有覆盖层都不得使用固定像素尺寸；必须在 rebuild() 之后按 frame_w/frame_h 重新布局，并保证矩形与按钮热区都落在窗口内，窄窗口下允许降级为紧凑模式（更小字号、更矮输入框、按钮按可用宽度重排）。",
+      "tags": [
+        "ui",
+        "layout",
+        "scale",
+        "bugfix"
+      ],
+      "title": "弹窗、右键菜单、toast 必须按当前窗口尺寸自适应，不能硬编码像素尺寸",
+      "type": "constraint"
+    }
+  ],
+  "generatedAt": "2026-09-13T08:35:45.481Z"
+}

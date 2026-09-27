@@ -1,0 +1,61 @@
+{
+  "alternatives": [],
+  "apiVersion": "dsh.project-memory/v1alpha1",
+  "approvedAt": "2026-09-13T08:35:39.289Z",
+  "approvedBy": "human",
+  "consequences": [
+    "以后新增任何覆盖层（弹窗、菜单、提示条、预览面板）都必须接收当前 frame_w/frame_h 并在窗口尺寸变化后重新布局",
+    "窄窗口降级布局改变时，点击热区必须同步重算，不能只改绘制"
+  ],
+  "createdAt": "2026-09-13T08:35:16.263Z",
+  "evidence": [
+    {
+      "endLine": 438,
+      "path": "ui.py",
+      "sha256": "d75b3d7f8298d1d8e6443b490c2ab2141c036a9a44804fcad77805716091aed8",
+      "startLine": 428,
+      "symbol": "InputModal.resize"
+    },
+    {
+      "endLine": 482,
+      "path": "ui.py",
+      "sha256": "4b2614b04ec24c878fb3b69aed8721613aa919ac4d8b374f1a2a1c8b28d214b2",
+      "startLine": 469,
+      "symbol": "InputModal.draw"
+    },
+    {
+      "endLine": 112,
+      "path": "main.py",
+      "sha256": "cddae478ba6a86fc75d50e74e3290515788dca9e462b63f6f3238728a6f17daf",
+      "startLine": 108,
+      "symbol": "Pet.rebuild"
+    },
+    {
+      "endLine": 580,
+      "path": "main.py",
+      "sha256": "537624540aae4e6fc8b29953073312137a38e53267f977c91696592db15d3e99",
+      "startLine": 564,
+      "symbol": "Pet.render_frame"
+    },
+    {
+      "endLine": 178,
+      "path": "tools/logic_test.py",
+      "sha256": "e15a51430f6fa39133a3b37e838f623e7d4d7c04e49dbe55e59d1d020d67fb58",
+      "startLine": 152
+    }
+  ],
+  "id": "memory_19ff731b-ab39-4938-a83c-b5a60332c1f5",
+  "projectId": "793e63b5-eb5d-4852-b959-19e492168292",
+  "rationale": "用户报「修复缩小桌宠 scale 后，出现输入框显示不全的问题」：根因是 InputModal 固定 300×158（还带两个按钮），而 scale=0.7 时窗口只有 210×283，弹窗比窗口还宽，被窗口边缘裁掉。修复后 InputModal.resize(win_w, win_h) 取 w=max(150,min(300,win_w-16))、h=max(112,min(158,win_h-16))，并在 main.py 的 rebuild() 里随窗口尺寸重建时调用；toast 同样按 frame_w 自适应字号与截断。这是该类 bug 的通用模式：任何写死尺寸的覆盖层都会在小 scale 下失效。",
+  "subject": "覆盖层 UI 尺寸（弹窗/菜单/提示）",
+  "summary": "桌宠窗口尺寸随缩放比例和换装面板开关变化（scene_w = round(300*scale)、scene_h = round(404*scale)、frame_w = scene_w + (236 if panel_open else 0)、frame_h = scene_h，scale 可在 0.7~1.5 之间），因此 InputModal、CtxMenu、toast 等所有覆盖层都不得使用固定像素尺寸；必须在 rebuild() 之后按 frame_w/frame_h 重新布局，并保证矩形与按钮热区都落在窗口内，窄窗口下允许降级为紧凑模式（更小字号、更矮输入框、按钮按可用宽度重排）。",
+  "supersedes": [],
+  "tags": [
+    "ui",
+    "layout",
+    "scale",
+    "bugfix"
+  ],
+  "title": "弹窗、右键菜单、toast 必须按当前窗口尺寸自适应，不能硬编码像素尺寸",
+  "type": "constraint"
+}

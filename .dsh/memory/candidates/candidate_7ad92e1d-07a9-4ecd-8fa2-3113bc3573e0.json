@@ -1,0 +1,61 @@
+{
+  "apiVersion": "dsh.project-memory/v1alpha1",
+  "conflicts": [],
+  "createdAt": "2026-09-13T08:35:16.533Z",
+  "draft": {
+    "alternatives": [],
+    "consequences": [
+      "新增界面文本时不允许直接 font.render，必须先过 fit_text/fit_text_tail",
+      "不要用 Unicode 符号做图标；若确需新图标，在 ui.py 里加一个绘制函数"
+    ],
+    "evidence": [
+      {
+        "endLine": 83,
+        "path": "ui.py",
+        "sha256": "6424651cf6676bdcca2a6a8aa06262bcbd46bb07d968928e960088a8a5966433",
+        "startLine": 55,
+        "symbol": "fit_text / fit_text_tail"
+      },
+      {
+        "endLine": 144,
+        "path": "ui.py",
+        "sha256": "601ea8c728262e99b08db9d6edb9dc9162fad5ee730b49ccd9bb801e106ab010",
+        "startLine": 124,
+        "symbol": "draw_tick / draw_cross / draw_chev / star4_pts"
+      },
+      {
+        "endLine": 400,
+        "path": "ui.py",
+        "sha256": "1e55e86ba190575055f52d309ec58e10d33268e1d895b4023e30cbb31f5157e6",
+        "startLine": 400,
+        "symbol": "CtxMenu.draw"
+      },
+      {
+        "endLine": 569,
+        "path": "main.py",
+        "sha256": "c300615e22d42a247d39e51012fcb375c1728029be54dc7eccd468956f57dab0",
+        "startLine": 568,
+        "symbol": "Pet.render_frame"
+      }
+    ],
+    "rationale": "小窗口下长方案名会让菜单和提示条溢出窗口，因此把这套截断/滚动逻辑收敛成 ui 里的两个公共函数，避免每处各写一遍；字体缺字形的问题此前已多次踩坑（勾选标记、关闭叉、菜单箭头、标题装饰星都渲染成 tofu 方框），统一用绘制图元才彻底解决。",
+    "subject": "文本渲染与图标字形",
+    "summary": "所有长度不可控的文本（菜单项、方案名、提示、toast、输入框内容）必须经 ui.fit_text()（逐级缩字号，仍放不下则截断加省略号）或 ui.fit_text_tail()（单行输入框从左侧滚动、保留末尾正在输入的内容）渲染，不要直接 render；✓ ✕ › ✨ 这类符号在微软雅黑等中文字体里缺字形、会显示成方框，必须改用 pygame 图元绘制的 draw_tick / draw_cross / draw_chev / star4_pts。",
+    "supersedes": [],
+    "tags": [
+      "ui",
+      "text",
+      "font",
+      "convention"
+    ],
+    "title": "可变文本统一走 fit_text/fit_text_tail，勾叉箭头星星等符号用绘制图元",
+    "type": "convention"
+  },
+  "id": "candidate_7ad92e1d-07a9-4ecd-8fa2-3113bc3573e0",
+  "resolution": {
+    "at": "2026-09-13T08:35:42.469Z",
+    "memoryId": "memory_0b38b8e1-c752-4863-b4e3-e362859a0a66"
+  },
+  "sessionId": "session-bc2266d6-34ec-4dec-bc12-97ce36b28406",
+  "state": "approved"
+}

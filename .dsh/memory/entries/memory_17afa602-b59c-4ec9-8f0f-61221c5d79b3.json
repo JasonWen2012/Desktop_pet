@@ -1,0 +1,51 @@
+{
+  "alternatives": [],
+  "apiVersion": "dsh.project-memory/v1alpha1",
+  "approvedAt": "2026-09-13T08:35:45.470Z",
+  "approvedBy": "human",
+  "consequences": [
+    "改完 UI 必须跑 tools/logic_test.py 并确认 ALL PASS",
+    "无法用肉眼确认的视觉效果（位置、大小、颜色、是否被裁切）要转成可断言的数值"
+  ],
+  "createdAt": "2026-09-13T08:35:16.603Z",
+  "evidence": [
+    {
+      "endLine": 21,
+      "path": "tools/logic_test.py",
+      "sha256": "4d5dd5c871f352d1bcad506bb680493e1d8cb769660cb85dbf51d920ec89f28e",
+      "startLine": 1,
+      "symbol": "check"
+    },
+    {
+      "endLine": 178,
+      "path": "tools/logic_test.py",
+      "sha256": "3f3cd9cfff79720cb857cf6e9a84d85369c4365d37e0136696917217080a35e9",
+      "startLine": 150
+    },
+    {
+      "endLine": 333,
+      "path": "tools/logic_test.py",
+      "sha256": "cebed06d410b5ca3b7f82fcf556014587bc8526f371737520da7e684a261102d",
+      "startLine": 333
+    },
+    {
+      "endLine": 15,
+      "path": "tools/ascii_view.py",
+      "sha256": "9473516a14b23e7c64c0c51e1c3b10c10fb16620cb988a1ec00d3ae31ff2f5e9",
+      "startLine": 1
+    }
+  ],
+  "id": "memory_17afa602-b59c-4ec9-8f0f-61221c5d79b3",
+  "projectId": "793e63b5-eb5d-4852-b959-19e492168292",
+  "rationale": "此前多个问题都是靠断言定位而非看图（纹身大小是否生效、窄窗口弹窗是否越界、字形是否变方框）；「渲染不崩溃」不等于「显示正确」，所以每处修复都配了可复现的数字断言，例如用 scale 0.6 与 1.8 的不透明像素数对比来证明纹身大小生效、用矩形边界断言证明弹窗在 210×283 窗口内完整可见。",
+  "subject": "验证方式",
+  "summary": "本项目无法直接查看截图，验证手段固定为两条：在 SDL_VIDEODRIVER=dummy 下运行 tools/logic_test.py（60+ 条断言，逐条 check(name, cond)，末尾打印 ALL PASS / SOME FAILED），覆盖窄窗口布局、点击热区、文本宽度、纹身尺寸等；需要看造型时用 tools/ascii_view.py 把渲染出来的 PNG 转成彩色 ASCII 缩略图。新增或修改 UI 行为时应同时补一条断言。",
+  "supersedes": [],
+  "tags": [
+    "testing",
+    "verification",
+    "workflow"
+  ],
+  "title": "界面与渲染改动用无头逻辑测试 + ASCII 预览验证，不依赖肉眼看图",
+  "type": "convention"
+}
